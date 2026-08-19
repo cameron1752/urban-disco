@@ -3,6 +3,7 @@ import Paper from '@mui/material/Paper';
 import { Box, Typography, Avatar } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LikeButton from './LikeButton';
+import CommentButton from './CommentButton';
 import CommentIcon from '@mui/icons-material/Comment';
 
 
@@ -47,10 +48,7 @@ export default function FeedItem({ video, liked }) {
 
                     {/* comment */}
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <CommentIcon sx={{ color: "white", filter: "drop-shadow(0 0 2px rgba(0,0,0,0.6))" }} />
-                        <Typography variant="caption" sx={{ color: "white", textShadow: "0 0 3px rgba(0,0,0,0.7)" }}>
-                            {video.comments}
-                        </Typography>
+                        <CommentButton videoId={video.id} comments={video.comments}/>
                     </Box>
                 </Box>
 
