@@ -24,7 +24,7 @@ function Landing(){
     return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <Stack spacing={2} direction="column" alignItems="center">
-        <h2>Welcome to the Qwik Finance App</h2>
+        <h2>login here</h2>
         <GithubButton />
         <GoogleButton />
         </Stack>

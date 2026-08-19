@@ -28,7 +28,7 @@ export default function MenuAppBar() {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {user?.name}'s Finance App
+            {user?.name}
           </Typography>
           {auth && (
             <div>
@@ -41,7 +41,7 @@ export default function MenuAppBar() {
                 color="inherit"
                 
               >
-                <Avatar alt={user?.name} src={user?.avatarUrl} />
+                <Avatar alt={user?.name} src={user?.avatar_url} />
               </IconButton>
               <Menu
                 id="menu-appbar"

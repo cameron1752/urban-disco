@@ -4,39 +4,22 @@ import { generateTraceId } from '../util/TraceIdGenerater.jsx';
 const DataContext = createContext();
 
 export function DataProvider({ children }) {
-    const [transactionRows, setTransactionRows] = useState([]);
-    const [billsRows, setBillsRows] = useState([]);
-    const [incomeRows, setIncomeRows] = useState([]);
+    const [feedRows, setFeedRows] = useState([]);
 
     const refreshAllData = async () => {
         try {
-            console.log('Fetching financial data from Spring Boot backend...');
-            const [txRes, billsRes, incRes] = await Promise.all([
-                fetch('http://localhost:8080/v1/transactions', {
+            console.log('Fetching feed data from Spring Boot backend...');
+            const [feedRes] = await Promise.all([
+                fetch('http://localhost:8080/v1/feed', {
                     headers: {
                         'Content-Type': 'application/json',
                         'traceId': generateTraceId()
                     },
                     credentials: 'include', // Include credentials for session management
-                }),
-                fetch('http://localhost:8080/v1/bills', {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'traceId': generateTraceId()
-                    },
-                    credentials: 'include',
-                }),fetch('http://localhost:8080/v1/incomes', {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'traceId': generateTraceId()
-                    },
-                    credentials: 'include',
                 })
             ]);
 
-            setTransactionRows(await txRes.json());
-            setBillsRows(await billsRes.json());
-            setIncomeRows(await incRes.json());
+            setFeedRows(await feedRes.json());
         } catch {
             console.error('Error refreshing data');
         }
@@ -45,7 +28,7 @@ export function DataProvider({ children }) {
     useEffect(() => {refreshAllData();}, []);
 
     return (
-        <DataContext.Provider value={{ transactionRows, billsRows, incomeRows, refreshAllData, setTransactionRows, setBillsRows, setIncomeRows }}>
+        <DataContext.Provider value={{ feedRows, refreshAllData, setFeedRows }}>
             {children}
         </DataContext.Provider>
     );
