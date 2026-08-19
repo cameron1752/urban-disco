@@ -34,4 +34,29 @@ export function DataProvider({ children }) {
     );
 }
 
+export function toggleLike(videoId, nextLiked) {
+  console.log(`video ${videoId} ${nextLiked ? "liked" : "unliked"}, toggling like on backend`);
+
+  const toggleVideoLike = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/v1/likes/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'traceId': generateTraceId(),
+          'video_id': videoId
+        },
+        credentials: 'include',
+        body: JSON.stringify({ videoId, liked: nextLiked }),
+      });
+
+      console.log(await res.text());
+    } catch (err) {
+      console.error('Error toggling like', err);
+    }
+  };
+
+  toggleVideoLike(); // just call it directly — no useEffect needed
+}
+
 export const useGlobalData = () => useContext(DataContext);
