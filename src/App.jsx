@@ -5,7 +5,7 @@ import Container from '@mui/material/Container';
 import { useGlobalData, DataProvider } from './data/DataContext.jsx';
 import { AuthProvider, useAuth } from './data/AuthContext.jsx';
 import Landing from './landing.jsx';
-import Feed from './components/Item.jsx';
+import Feed from './components/Feed.jsx';
 
 
 
@@ -30,12 +30,9 @@ function Innards() {
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
-        <Container maxWidth="lg">
-          <MenuAppBar />
-        </Container>
 
         <Container maxWidth="lg">
-          <Feed rows={feedRows} />
+          <Feed feedObjects={feedRows.feedObjects} />
         </Container>
       </div>
     </ThemeProvider>
