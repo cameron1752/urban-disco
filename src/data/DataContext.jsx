@@ -34,6 +34,27 @@ export function DataProvider({ children }) {
   );
 }
 
+export async function getVideos(user){
+  console.log(`fetching videos for ${user}`);
+
+try {
+    const res = await fetch('http://localhost:8080/v1/videos', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'traceId': generateTraceId(),
+        'user_id': user.user_id
+      },
+      credentials: 'include'
+    });
+
+    return await res.json();
+  } catch (err) {
+    console.error('Error getting comments', err);
+    return [];
+  }
+}
+
 export function toggleLike(videoId, nextLiked) {
   console.log(`video ${videoId} ${nextLiked ? "liked" : "unliked"}, toggling like on backend`);
 
@@ -127,6 +148,27 @@ export async function getComments(videoId) {
 
   try {
     const res = await fetch('http://localhost:8080/v1/comments', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'traceId': generateTraceId(),
+        'video_id': videoId
+      },
+      credentials: 'include'
+    });
+
+    return await res.json();
+  } catch (err) {
+    console.error('Error getting comments', err);
+    return [];
+  }
+}
+
+export async function getLike(videoId){
+    console.log(`getting like status for ${videoId}`);
+
+  try {
+    const res = await fetch('http://localhost:8080/v1/likes/check', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

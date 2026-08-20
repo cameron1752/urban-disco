@@ -6,6 +6,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { getComments, postComment, deleteComment, editComment } from '../data/DataContext.jsx';
 import TextField from '@mui/material/TextField';
 import { useAuth } from '../data/AuthContext.jsx';
+import AvatarButton from './AvatarButton';
 
 export default function CommentsPanel({ open, onClose, videoId }) {
     const [commentList, setCommentList] = useState([]);
@@ -91,11 +92,6 @@ export default function CommentsPanel({ open, onClose, videoId }) {
         }
     }
 
-    const handleEdit = async (comment) => {
-        console.log(`editing ${JSON.stringify({ comment })}`);
-        setNewComment(comment.text);
-    }
-
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -143,19 +139,11 @@ export default function CommentsPanel({ open, onClose, videoId }) {
 
                 {!loading && commentList.map((comment) => (
                     <Box key={comment.id} sx={{ display: "flex", gap: 1.5, py: 1, alignItems: "flex-start" }}>
-                        <Avatar
-                            src={comment.userId.avatar_url}
-                            alt={comment.userId.username}
-                            sx={{ width: 32, height: 32, flexShrink: 0 }}
-                        />
                         <Box sx={{ minWidth: 0, flex: 1, textAlign: "left" }}>
-                            <Typography variant="body2" sx={{ color: "white", fontWeight: 600, textAlign: "left" }}>
-                                {comment.userId.username}
-                            </Typography>
+                            <AvatarButton user = {comment.userId} />
                             <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.85)", textAlign: "left" }}>
                                 {comment.text}
                             </Typography>
-
                         </Box>
 
                         {user?.user_id === comment.userId.user_id && (
