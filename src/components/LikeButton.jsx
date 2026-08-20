@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { IconButton, Typography } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import {toggleLike} from '../data/DataContext.jsx';
+import { toggleLike } from '../data/DataContext.jsx';
 
 export default function LikeButton({ liked, likes, videoId }) {
   const [isLiked, setIsLiked] = useState(liked);
   const [likeCount, setLikeCount] = useState(likes);
+
+  useEffect(() => {
+    setIsLiked(liked);
+  }, [liked]);
 
   const handleLikeClick = () => {
     const nextLiked = !isLiked;

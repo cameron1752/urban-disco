@@ -11,12 +11,6 @@ export const FeedContainer = styled(Box)({
 });
 
 export default function Feed({ feedObjects }) {
-    const handleLike = (videoId, liked) => {
-    // TODO: call your API here, e.g.
-    // fetch(`/api/videos/${videoId}/like`, { method: liked ? "POST" : "DELETE" });
-    console.log(videoId, liked ? "liked" : "unliked");
-  };
-
 
   return (
     <FeedContainer>

@@ -1,10 +1,9 @@
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import { Box, Typography, Avatar } from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LikeButton from './LikeButton';
 import CommentButton from './CommentButton';
-import CommentIcon from '@mui/icons-material/Comment';
+import AvatarButton from './AvatarButton';
 
 
 export const StyledFeedItem = styled(Paper)(({ theme }) => ({
@@ -29,14 +28,7 @@ export default function FeedItem({ video, liked }) {
 
                 {/* avatar + name */}
                 <Box sx={{ position: "absolute", top: 8, left: 8, display: "flex", alignItems: "center", gap: 1, }}>
-                    <Avatar
-                        src={video.userId.avatar_url}
-                        alt={video.userId.name}
-                        sx={{ width: 28, height: 28, border: "1px solid white" }}
-                    />
-                    <Typography variant="body2" sx={{ color: "white", textShadow: "0 0 3px rgba(0,0,0,0.7)" }} >
-                        {video.userId.name}
-                    </Typography>
+                    <AvatarButton user={video.userId} />
                 </Box>
 
                 {/* like + comment icon */}
