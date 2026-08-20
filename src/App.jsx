@@ -1,11 +1,13 @@
 import './App.css'
-import MenuAppBar from './components/MenuAppBar.jsx'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import { useGlobalData, DataProvider } from './data/DataContext.jsx';
 import { AuthProvider, useAuth } from './data/AuthContext.jsx';
 import Landing from './landing.jsx';
 import Feed from './components/Feed.jsx';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Profile from './components/Profile.jsx';
+import Video from './components/Video.jsx';
 
 
 
@@ -30,9 +32,12 @@ function Innards() {
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
-
         <Container maxWidth="lg">
-          <Feed feedObjects={feedRows.feedObjects} />
+          <Routes>
+            <Route path="/" element={<Feed feedObjects={feedRows.feedObjects} />} />
+            <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/video/:videoid" element={<Video />} />
+          </Routes>
         </Container>
       </div>
     </ThemeProvider>
@@ -63,7 +68,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
     </AuthProvider>
   );
 }

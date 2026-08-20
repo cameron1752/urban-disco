@@ -1,15 +1,30 @@
 import { useState, useEffect } from 'react';
 import { Box, Typography, IconButton, Avatar, CircularProgress } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import SendIcon from '@mui/icons-material/Send';
-import { getComments, postComment } from '../data/DataContext.jsx';
+import { getComments, postComment, deleteComment, editComment } from '../data/DataContext.jsx';
 import TextField from '@mui/material/TextField';
+import { useAuth } from '../data/AuthContext.jsx';
+import AvatarButton from './AvatarButton';
 
 export default function CommentsPanel({ open, onClose, videoId }) {
     const [commentList, setCommentList] = useState([]);
     const [loading, setLoading] = useState(false);
-      const [newComment, setNewComment] = useState('');
-  const [posting, setPosting] = useState(false);
+    const [newComment, setNewComment] = useState('');
+    const [posting, setPosting] = useState(false);
+    const [editingComment, setEditingComment] = useState(null);
+    const { user } = useAuth();
+
+    const startEdit = (comment) => {
+        setEditingComment(comment);
+        setNewComment(comment.text);
+    };
+
+    const cancelEdit = () => {
+        setEditingComment(null);
+        setNewComment('');
+    };
 
     // fetch comments whenever the panel opens
     useEffect(() => {
@@ -38,26 +53,51 @@ export default function CommentsPanel({ open, onClose, videoId }) {
         return () => window.removeEventListener('scroll', handleScroll, true);
     }, [open, onClose]);
 
-     const handleSubmit = async () => {
-    const trimmed = newComment.trim();
-    if (!trimmed || posting) return;
+    const handleSubmit = async () => {
+        const trimmed = newComment.trim();
+        if (!trimmed || posting) return;
+        console.log('editingComment:', editingComment);
+        setPosting(true);
 
-    setPosting(true);
-    const saved = await postComment(videoId, trimmed);
-    setPosting(false);
+        if (editingComment) {
+            const saved = await editComment(editingComment.id, trimmed);
+            setPosting(false);
 
-    if (saved) {
-      setCommentList((prev) => [...prev, saved]);
-      setNewComment('');
+            if (saved) {
+                setCommentList((prev) =>
+                    prev.map((c) => (c.id === editingComment.id ? { ...c, text: trimmed } : c))
+                );
+                setEditingComment(null);
+                setNewComment('');
+            }
+        } else {
+            const saved = await postComment(videoId, trimmed);
+            setPosting(false);
+
+            if (saved) {
+                setCommentList((prev) => [...prev, saved]);
+                setNewComment('');
+            }
+        }
+    };
+
+    const handleDelete = async (comment) => {
+        console.log(`deleting ${JSON.stringify({ comment })}`);
+        const success = deleteComment(comment);
+
+        if (success) {
+            setCommentList((prev) => prev.filter((c) => c.id !== comment.id));
+        } else {
+            console.error('Failed to delete comment, leaving it in the list');
+        }
     }
-  };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit();
+        }
+    };
 
     return (
         <Box
@@ -99,61 +139,67 @@ export default function CommentsPanel({ open, onClose, videoId }) {
 
                 {!loading && commentList.map((comment) => (
                     <Box key={comment.id} sx={{ display: "flex", gap: 1.5, py: 1, alignItems: "flex-start" }}>
-                        <Avatar
-                            src={comment.userId.avatar_url}
-                            alt={comment.userId.username}
-                            sx={{ width: 32, height: 32, flexShrink: 0 }}
-                        />
                         <Box sx={{ minWidth: 0, flex: 1, textAlign: "left" }}>
-                            <Typography variant="body2" sx={{ color: "white", fontWeight: 600, textAlign: "left" }}>
-                                {comment.userId.username}
-                            </Typography>
+                            <AvatarButton user = {comment.userId} />
                             <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.85)", textAlign: "left" }}>
                                 {comment.text}
                             </Typography>
                         </Box>
+
+                        {user?.user_id === comment.userId.user_id && (
+
+                            <Box sx={{ minWidth: 0, flex: 1, textAlign: "right" }}>
+                                <IconButton onClick={() => startEdit(comment)} sx={{ color: "white" }} aria-label="Edit Comment">
+                                    <EditNoteIcon />
+                                </IconButton>
+                                <IconButton onClick={() => handleDelete(comment)} sx={{ color: "red" }} aria-label="Delete comments">
+                                    <CloseIcon />
+                                </IconButton>
+                            </Box>
+                        )}
+
                     </Box>
                 ))}
 
-                
+
             </Box>
             <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          padding: "12px 16px",
-          borderTop: "1px solid rgba(255,255,255,0.1)",
-        }}
-      >
-        <TextField
-          fullWidth
-          size="small"
-          placeholder="Add a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={posting}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              color: "white",
-              backgroundColor: "rgba(255,255,255,0.08)",
-              borderRadius: 3,
-              "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
-              "&:hover fieldset": { borderColor: "rgba(255,255,255,0.4)" },
-              "&.Mui-focused fieldset": { borderColor: "rgba(255,255,255,0.6)" },
-            },
-          }}
-        />
-        <IconButton
-          onClick={handleSubmit}
-          disabled={!newComment.trim() || posting}
-          sx={{ color: newComment.trim() ? "white" : "rgba(255,255,255,0.3)" }}
-          aria-label="Post comment"
-        >
-          {posting ? <CircularProgress size={20} sx={{ color: "white" }} /> : <SendIcon />}
-        </IconButton>
-      </Box>
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    padding: "12px 16px",
+                    borderTop: "1px solid rgba(255,255,255,0.1)",
+                }}
+            >
+                <TextField
+                    fullWidth
+                    size="small"
+                    placeholder="Add a comment..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    disabled={posting}
+                    sx={{
+                        "& .MuiOutlinedInput-root": {
+                            color: "white",
+                            backgroundColor: "rgba(255,255,255,0.08)",
+                            borderRadius: 3,
+                            "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
+                            "&:hover fieldset": { borderColor: "rgba(255,255,255,0.4)" },
+                            "&.Mui-focused fieldset": { borderColor: "rgba(255,255,255,0.6)" },
+                        },
+                    }}
+                />
+                <IconButton
+                    onClick={handleSubmit}
+                    disabled={!newComment.trim() || posting}
+                    sx={{ color: newComment.trim() ? "white" : "rgba(255,255,255,0.3)" }}
+                    aria-label="Post comment"
+                >
+                    {posting ? <CircularProgress size={20} sx={{ color: "white" }} /> : <SendIcon />}
+                </IconButton>
+            </Box>
         </Box>
     );
 }
