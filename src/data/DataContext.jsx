@@ -46,8 +46,7 @@ export function toggleLike(videoId, nextLiked) {
           'traceId': generateTraceId(),
           'video_id': videoId
         },
-        credentials: 'include',
-        body: JSON.stringify({ videoId, liked: nextLiked }),
+        credentials: 'include'
       });
 
       console.log(await res.text());
@@ -56,7 +55,48 @@ export function toggleLike(videoId, nextLiked) {
     }
   };
 
-  toggleVideoLike(); // just call it directly — no useEffect needed
+  toggleVideoLike(); 
+}
+
+export async function postComment(videoId, text) {
+  try {
+    const res = await fetch('http://localhost:8080/v1/comments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'traceId': generateTraceId(),
+      },
+      credentials: 'include',
+      body: JSON.stringify({ videoId, text }),
+    });
+
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error('Error posting comment', err);
+    return null;
+  }
+}
+
+export async function getComments(videoId) {
+  console.log(`getting comments for ${videoId}`);
+
+  try {
+    const res = await fetch('http://localhost:8080/v1/comments', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'traceId': generateTraceId(),
+        'video_id': videoId
+      },
+      credentials: 'include'
+    });
+
+    return await res.json();
+  } catch (err) {
+    console.error('Error getting comments', err);
+    return [];
+  }
 }
 
 export const useGlobalData = () => useContext(DataContext);
