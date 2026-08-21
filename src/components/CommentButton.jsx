@@ -7,6 +7,11 @@ import CommentsPanel from './CommentsPanel.jsx';
 
 export default function CommentButton({ videoId, comments }) {
     const [open, setOpen] = useState(false);
+    const [commentCount, setCommentCount] = useState(comments);
+
+    useEffect(() => {
+        setCommentCount(comments);
+    }, [comments]);
 
     return (
         <>
@@ -14,13 +19,14 @@ export default function CommentButton({ videoId, comments }) {
                 <CommentIcon sx={{ color: "white", filter: "drop-shadow(0 0 2px rgba(0,0,0,0.6))" }} />
             </IconButton>
             <Typography variant="caption" sx={{ color: "white", textShadow: "0 0 3px rgba(0,0,0,0.7)" }}>
-                {comments}
+                {commentCount}
             </Typography>
 
             <CommentsPanel
                 open={open}
                 onClose={() => setOpen(false)}
                 videoId={videoId}
+                onCommentCountChange={setCommentCount}
             />
         </>
     );

@@ -8,13 +8,17 @@ import TextField from '@mui/material/TextField';
 import { useAuth } from '../data/AuthContext.jsx';
 import AvatarButton from './AvatarButton';
 
-export default function CommentsPanel({ open, onClose, videoId }) {
+export default function CommentsPanel({ open, onClose, videoId, onCommentCountChange }) {
     const [commentList, setCommentList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [newComment, setNewComment] = useState('');
     const [posting, setPosting] = useState(false);
     const [editingComment, setEditingComment] = useState(null);
     const { user } = useAuth();
+
+    useEffect(() => {
+        onCommentCountChange?.(commentList.length);
+    }, [commentList, onCommentCountChange]);
 
     const startEdit = (comment) => {
         setEditingComment(comment);
@@ -140,7 +144,7 @@ export default function CommentsPanel({ open, onClose, videoId }) {
                 {!loading && commentList.map((comment) => (
                     <Box key={comment.id} sx={{ display: "flex", gap: 1.5, py: 1, alignItems: "flex-start" }}>
                         <Box sx={{ minWidth: 0, flex: 1, textAlign: "left" }}>
-                            <AvatarButton user = {comment.userId} />
+                            <AvatarButton user={comment.userId} />
                             <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.85)", textAlign: "left" }}>
                                 {comment.text}
                             </Typography>
