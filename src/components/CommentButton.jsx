@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography, Avatar, CircularProgress } from "@mui/material";
 import CommentIcon from '@mui/icons-material/Comment';
+import CloseIcon from '@mui/icons-material/Close';
+import { getComments } from '../data/DataContext.jsx';
 import CommentsPanel from './CommentsPanel.jsx';
 
 export default function CommentButton({ videoId, comments }) {
