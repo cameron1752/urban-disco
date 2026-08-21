@@ -1,6 +1,6 @@
 import { useParams, useLocation } from "react-router-dom";
 import { useState, useEffect } from 'react';
-import { Box, Typography, ImageList, ImageListItem } from "@mui/material";
+import { Box, Typography, ImageList, ImageListItem, CardMedia } from "@mui/material";
 import { getLike } from "../data/DataContext.jsx";
 import ImageButton from "./ImageButton";
 import Feed from './Feed.jsx';
