@@ -13,7 +13,9 @@ export function DataProvider({ children }) {
         fetch('http://localhost:8080/v1/feed', {
           headers: {
             'Content-Type': 'application/json',
-            'traceId': generateTraceId()
+            'traceId': generateTraceId(),
+            'lat':39.9645465,
+            'long':-75.1605125
           },
           credentials: 'include', // Include credentials for session management
         })
